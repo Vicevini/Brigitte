@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   int _offset = 0;
 
   int _limite = 5;
+  List novaLista = [];
 
   // Map
 
@@ -76,8 +77,8 @@ class _HomePageState extends State<HomePage> {
               onSubmitted: (text) {
                 setState(() {
                   _search = text;
-
                   _offset = 0;
+                  _limite =5;
                 });
               },
             ),
@@ -123,17 +124,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
+    var listaGifs = snapshot.data["data"];
+    novaLista = [...listaGifs];
     return GridView.builder(
         padding: EdgeInsets.all(10),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-        itemCount: _getCount(snapshot.data["data"]),
+        itemCount: _getCount(listaGifs),
         itemBuilder: (context, index) {
-          if (_search == null || index < snapshot.data["data"].length)
+          if (_search == null || index < listaGifs.length)
             return GestureDetector(
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: snapshot.data["data"][index]["images"]["fixed_height"]
+                image: listaGifs[index]["images"]["fixed_height"]
                     ["url"],
                 height: 300,
                 fit: BoxFit.cover,
@@ -143,10 +146,10 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            GifPage(snapshot.data["data"][index])));
+                            GifPage(listaGifs[index])));
               },
               onLongPress: () {
-                Share.share(snapshot.data["data"][index]["images"]
+                Share.share(listaGifs[index]["images"]
                     ["fixed-height"]["url"]);
               },
             );
@@ -170,7 +173,6 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   setState(() {
                     _offset = _offset + 4;
-
                     _limite += _offset;
                   });
                 },
