@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage> {
   String? _search;
   int _offset = 0;
   int _limite = 5;
-  List novaLista = [];
-  List listaDuplicada = [];
+  List lista = [];
+
 
   // Requisitando dados da API
 
@@ -79,17 +79,15 @@ class _HomePageState extends State<HomePage> {
   // Criando a lista e retornando a tela de compartilhamento = telaShare caso o gif seja selecionado
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
-    var listaGifs = snapshot.data["data"];
-    novaLista = [...listaGifs];
-    listaDuplicada = [...novaLista, novaLista];
-    // novaLista = [...listaGifs, ...listaGifs];
+    lista = [...lista, ...snapshot.data["data"]];
+
     return GridView.builder(
         padding: EdgeInsets.all(10),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-        itemCount: _getCount(novaLista),
+        itemCount: _getCount(lista),
         itemBuilder: (context, index) {
-          if (_search == null || index < novaLista.length) {
+          if (_search == null || index < lista.length) {
             return telaERota(index, context);
           } else {
             return carregaMais();
@@ -123,6 +121,7 @@ class _HomePageState extends State<HomePage> {
             _search = text;
             _offset = 0;
             _limite = 5;
+            lista = [];
           });
         },
       ),
@@ -162,17 +161,17 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       child: FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
-        image: novaLista[index]["images"]["fixed_height"]["url"],
+        image: lista[index]["images"]["fixed_height"]["url"],
         height: 300,
         fit: BoxFit.cover,
       ),
       // Redirecionando telas
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => GifPage(novaLista[index])));
+            MaterialPageRoute(builder: (context) => GifPage(lista[index])));
       },
       onLongPress: () {
-        Share.share(novaLista[index]["images"]["fixed-height"]["url"]);
+        Share.share(lista[index]["images"]["fixed-height"]["url"]);
       },
     );
   }
