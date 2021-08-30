@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 
 import 'dart:convert';
@@ -30,12 +32,13 @@ class _HomePageState extends State<HomePage> {
   Future<Map> _getGifs() async {
     http.Response response;
 
-    if (_search == null || _search!.isEmpty)
+    if (_search == null || _search!.isEmpty) {
       response = await http.get(Uri.parse(
           "https://api.giphy.com/v1/gifs/trending?api_key=OKVv8YkE87MULZSZX7K9BRn5iqSF1I8C&limit=6&rating=g"));
-    else
+    } else {
       response = await http.get(Uri.parse(
           "https://api.giphy.com/v1/gifs/search?api_key=OKVv8YkE87MULZSZX7K9BRn5iqSF1I8C&q=$_search&limit=$_limite&offset=$_offset&rating=g&lang=en"));
+    }
 
     var decode = json.decode(response.body);
 
@@ -78,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                 setState(() {
                   _search = text;
                   _offset = 0;
-                  _limite =5;
+                  _limite = 5;
                 });
               },
             ),
@@ -102,10 +105,11 @@ class _HomePageState extends State<HomePage> {
                     );
 
                   default:
-                    if (snapshot.hasError)
+                    if (snapshot.hasError) {
                       return Container();
-                    else
+                    } else {
                       return _createGifTable(context, snapshot);
+                    }
                 }
               },
             ),
@@ -132,12 +136,11 @@ class _HomePageState extends State<HomePage> {
             crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
         itemCount: _getCount(listaGifs),
         itemBuilder: (context, index) {
-          if (_search == null || index < listaGifs.length)
+          if (_search == null || index < listaGifs.length) {
             return GestureDetector(
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: listaGifs[index]["images"]["fixed_height"]
-                    ["url"],
+                image: listaGifs[index]["images"]["fixed_height"]["url"],
                 height: 300,
                 fit: BoxFit.cover,
               ),
@@ -145,19 +148,18 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            GifPage(listaGifs[index])));
+                        builder: (context) => GifPage(listaGifs[index])));
               },
               onLongPress: () {
-                Share.share(listaGifs[index]["images"]
-                    ["fixed-height"]["url"]);
+                Share.share(listaGifs[index]["images"]["fixed-height"]["url"]);
               },
             );
-          else
+          } else {
             return Container(
               child: GestureDetector(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  // ignore: prefer_const_literals_to_create_immutables
                   children: <Widget>[
                     Icon(
                       Icons.add,
@@ -178,6 +180,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             );
+          }
         });
   }
 }
