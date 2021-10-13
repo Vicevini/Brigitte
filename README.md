@@ -1,4 +1,5 @@
 # Brigitte
  Flutter Studies
 
- Esse repositório será utilizado para documentar meus estudos em Flutter.
+# About
+ A Gif Search and Share Application
